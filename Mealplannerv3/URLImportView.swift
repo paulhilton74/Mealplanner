@@ -6,7 +6,7 @@ struct URLImportView: View {
     @StateObject private var recipeManager = RecipeManager.shared
     
     @State private var isLoading = true
-    @State private var extractedRecipe: (title: String, ingredients: [String], instructions: [String], images: [String])? = nil
+    @State private var extractedRecipe: (title: String, ingredients: [String], instructions: [String], images: [(url: URL, title: String?)])? = nil
     @State private var errorMessage: String? = nil
     @State private var selectedTags: Set<String> = []
     @State private var customTag: String = ""
@@ -196,9 +196,8 @@ struct URLImportView: View {
                     self.extractedRecipe = result
                     
                     // Download image if available
-                    if let imageUrlString = result.images.first,
-                       let imageUrl = URL(string: imageUrlString) {
-                        downloadImage(from: imageUrl)
+                    if let firstImage = result.images.first {
+                        downloadImage(from: firstImage.url)
                     }
                     
                     self.isLoading = false
@@ -236,8 +235,8 @@ struct URLImportView: View {
             title: recipe.title,
             ingredients: recipe.ingredients,
             instructions: recipe.instructions,
-            imageData: downloadedImageData,
-            tags: tagsArray
+            tags: tagsArray,
+            imageData: downloadedImageData
         )
         
         isSaving = false

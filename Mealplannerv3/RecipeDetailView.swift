@@ -154,7 +154,7 @@ struct RecipeDetailView: View {
                 .environment(\.managedObjectContext, viewContext)
         }
         .sheet(isPresented: $showingWeeklyPlannerSheet) {
-            WeeklyPlannerSelectionView(recipe: recipe)
+            WeeklyPlanDaySelectionView(recipe: recipe)
                 .environment(\.managedObjectContext, viewContext)
         }
         .onAppear {
