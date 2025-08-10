@@ -1,34 +1,45 @@
-# Mealplannerv3
+# 🍽️ Meal Planner iOS App
 
-A meal planning app that allows you to extract recipes from websites and images using local extractors and Google Cloud Vision API.
+A comprehensive iOS meal planning application built with SwiftUI and Core Data, featuring AI-powered recipe extraction, URL sharing, and intelligent meal planning.
 
-## Features
+## ✨ Features
 
-- Extract recipes from websites using JSON-LD and Microdata extractors
-- Extract recipes from images using Google Cloud Vision API
-- Save recipes to your meal plan
-- Create shopping lists based on your meal plan
+### Core Functionality
+- **Recipe Extraction**: Extract recipes from websites using AI and web scraping
+- **OCR Scanning**: Scan recipes from images (cookbooks, magazines) using Vision framework
+- **AI Analysis**: Powered recipe analysis using Claude Vision Service
+- **Weekly Planning**: Drag-and-drop interface for meal planning
+- **Shopping Lists**: Automatic generation from meal plans
+- **Recipe Management**: Automatic tagging and categorization
 
-## Setup
+### 🆕 New Features Added
+- **URL Sharing**: Import recipes directly from Safari and other apps
+- **Weekly Planner Integration**: "Add to Weekly Planner" button in recipe details
+- **Secure API Management**: Environment variables and local config file support
+- **Multi-URL Support**: Handle `mealplanner://`, `http://`, and `https://` URLs
 
-### Prerequisites
+## 🛠️ Technical Stack
 
-- Xcode 14.0 or later
-- iOS 16.0 or later
-- Swift 5.7 or later
-- A Google Cloud Platform account with the Vision API enabled
+- **SwiftUI** - Modern UI framework
+- **Core Data** - Local data persistence
+- **Swift Package Manager** - Dependency management
+- **SwiftSoup** - HTML parsing for recipe extraction
+- **Vision Framework** - OCR capabilities
+- **Claude AI** - Recipe analysis and processing
+- **Google Cloud Vision** - Advanced OCR and image analysis
 
-### Google Cloud Vision API Setup
+## 🚀 Setup Instructions
 
-The app uses Google Cloud Vision API to extract recipe details from images. To use this feature, you need to:
+### 1. Clone the Repository
+```bash
+git clone https://github.com/paulhilton74/Mealplanner.git
+cd Mealplanner
+```
 
-1. Create a Google Cloud Platform account if you don't have one: [https://cloud.google.com/](https://cloud.google.com/)
-2. Create a new project in the Google Cloud Console
-3. **Enable billing for your project (REQUIRED):**
-   - Go to [Billing](https://console.cloud.google.com/billing)
-   - Click "Link a billing account" or create a new billing account
-   - Select your billing account and link it to your project
-   - Note: The Vision API requires an active billing account even if you stay within the free tier
+### 2. Configure API Keys
+```bash
+# Copy the template
+cp Mealplannerv3/APIKeys.plist.template Mealplannerv3/APIKeys.plist
 4. **Enable the Cloud Vision API for your project:**
    - Go to [API Library](https://console.cloud.google.com/apis/library/vision.googleapis.com)
    - Select your project
