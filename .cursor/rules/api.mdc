@@ -1,0 +1,10 @@
+---
+description: whenever a new package or API is mentioned, always search the web for official documentation and then continue implementation
+globs: 
+alwaysApply: true
+---
+
+# Your rule content
+
+- You can @ files here
+- You can use markdown but dont have to

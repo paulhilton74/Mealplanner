@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23605" systemVersion="24C101" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithSwiftData="YES" userDefinedModelVersionIdentifier="">
+    <entity name="MealPlan" representedClassName="MealPlan" syncable="YES" codeGenerationType="class">
+        <attribute name="date" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <relationship name="recipe" maxCount="1" deletionRule="Nullify" destinationEntity="RecipeEntity" inverseName="mealPlans" inverseEntity="RecipeEntity"/>
+    </entity>
+    <entity name="RecipeEntity" representedClassName="RecipeEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="dateAdded" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="imageData" optional="YES" attributeType="Binary"/>
+        <attribute name="ingredientsString" attributeType="String" valueTransformerName="StringArrayTransformer" customClassName="[String]"/>
+        <attribute name="instructionsString" attributeType="String" valueTransformerName="StringArrayTransformer" customClassName="[String]"/>
+        <attribute name="searchTerms" optional="YES" attributeType="String"/>
+        <attribute name="sourceURL" optional="YES" attributeType="String"/>
+        <attribute name="tagsString" optional="YES" attributeType="String" valueTransformerName="StringArrayTransformer" customClassName="[String]"/>
+        <attribute name="title" attributeType="String"/>
+        <relationship name="mealPlans" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="MealPlan" inverseName="recipe" inverseEntity="MealPlan"/>
+        <relationship name="weeklyPlans" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="WeeklyPlanEntity" inverseName="recipe" inverseEntity="WeeklyPlanEntity"/>
+    </entity>
+    <entity name="ShoppingItem" representedClassName="ShoppingItem" syncable="YES" codeGenerationType="class">
+        <attribute name="category" attributeType="String" defaultValueString="Other"/>
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="isChecked" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="name" attributeType="String"/>
+        <attribute name="quantity" attributeType="Integer 32" defaultValueString="1" usesScalarValueType="YES"/>
+        <relationship name="list" maxCount="1" deletionRule="Nullify" destinationEntity="ShoppingList" inverseName="items" inverseEntity="ShoppingList"/>
+    </entity>
+    <entity name="ShoppingList" representedClassName="ShoppingList" syncable="YES" codeGenerationType="class">
+        <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="name" attributeType="String"/>
+        <relationship name="items" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ShoppingItem" inverseName="list" inverseEntity="ShoppingItem"/>
+    </entity>
+    <entity name="WeeklyPlanEntity" representedClassName="WeeklyPlanEntity" syncable="YES">
+        <attribute name="dayOfWeek" attributeType="String"/>
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <relationship name="recipe" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="RecipeEntity" inverseName="weeklyPlans" inverseEntity="RecipeEntity"/>
+    </entity>
+</model>
