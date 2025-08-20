@@ -69,7 +69,46 @@ class RecipeManager: ObservableObject {
         return weeklyPlan[day] ?? []
     }
     
-    func addRecipeToDay(_ recipe: RecipeEntity, day: String) {
+    func getRecipesForDay(_ day: String, mealType: String? = nil) -> [(recipe: RecipeEntity, mealType: String?)] {
+        let request = NSFetchRequest<WeeklyPlanEntity>(entityName: "WeeklyPlanEntity")
+        var predicates = [NSPredicate(format: "dayOfWeek == %@", day)]
+        
+        if let mealType = mealType {
+            predicates.append(NSPredicate(format: "mealType == %@", mealType))
+        }
+        
+        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
+        request.sortDescriptors = [NSSortDescriptor(key: "mealType", ascending: true)]
+        
+        do {
+            let planEntities = try persistence.container.viewContext.fetch(request)
+            return planEntities.compactMap { entity -> (recipe: RecipeEntity, mealType: String?)? in
+                guard let recipe = entity.recipe else { return nil }
+                return (recipe: recipe, mealType: entity.mealType)
+            }
+        } catch {
+            print("Error loading recipes for day with meal type: \(error)")
+            return []
+        }
+    }
+    
+    func getMealTypesForDay(_ day: String) -> [String: [RecipeEntity]] {
+        let recipesWithMealTypes = getRecipesForDay(day, mealType: nil)
+        var mealTypeGroups: [String: [RecipeEntity]] = [:]
+        
+        for (recipe, mealType) in recipesWithMealTypes {
+            // Use the actual mealType instead of defaulting to "Dinner"
+            let type = mealType ?? "Unknown"
+            if mealTypeGroups[type] == nil {
+                mealTypeGroups[type] = []
+            }
+            mealTypeGroups[type]?.append(recipe)
+        }
+        
+        return mealTypeGroups
+    }
+    
+    func addRecipeToDay(_ recipe: RecipeEntity, day: String, mealType: String = "Dinner") {
         let context = persistence.container.viewContext
         
         // Create a new weekly plan entity
@@ -77,6 +116,7 @@ class RecipeManager: ObservableObject {
         planEntity.id = UUID()
         planEntity.dayOfWeek = day
         planEntity.recipe = recipe
+        planEntity.mealType = mealType
         
         // Update the in-memory model
         if weeklyPlan[day] == nil {
@@ -93,12 +133,18 @@ class RecipeManager: ObservableObject {
         }
     }
     
-    func removeRecipeFromDay(_ recipe: RecipeEntity, day: String) {
+    func removeRecipeFromDay(_ recipe: RecipeEntity, day: String, mealType: String? = nil) {
         let context = persistence.container.viewContext
         
         // Find and delete the corresponding WeeklyPlanEntity
         let request = NSFetchRequest<WeeklyPlanEntity>(entityName: "WeeklyPlanEntity")
-        request.predicate = NSPredicate(format: "dayOfWeek == %@ AND recipe == %@", day, recipe)
+        var predicates = [NSPredicate(format: "dayOfWeek == %@ AND recipe == %@", day, recipe)]
+        
+        if let mealType = mealType {
+            predicates.append(NSPredicate(format: "mealType == %@", mealType))
+        }
+        
+        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
         
         do {
             let entities = try context.fetch(request)
@@ -132,6 +178,53 @@ class RecipeManager: ObservableObject {
         addRecipeToDay(recipe, day: day)
     }
     
+    func updateMealType(for recipe: RecipeEntity, day: String, newMealType: String) {
+        let context = persistence.container.viewContext
+        
+        // Find the WeeklyPlanEntity to update
+        let request = NSFetchRequest<WeeklyPlanEntity>(entityName: "WeeklyPlanEntity")
+        request.predicate = NSPredicate(format: "dayOfWeek == %@ AND recipe == %@", day, recipe)
+        
+        do {
+            let entities = try context.fetch(request)
+            for entity in entities {
+                entity.mealType = newMealType
+            }
+            
+            try context.save()
+            objectWillChange.send()
+        } catch {
+            print("Error updating meal type: \(error)")
+            context.rollback()
+        }
+    }
+    
+    func getRecipesByMealType(mealType: String) -> [RecipeEntity] {
+        let request = NSFetchRequest<WeeklyPlanEntity>(entityName: "WeeklyPlanEntity")
+        request.predicate = NSPredicate(format: "mealType == %@", mealType)
+        
+        do {
+            let planEntities = try persistence.container.viewContext.fetch(request)
+            return planEntities.compactMap { $0.recipe }
+        } catch {
+            print("Error loading recipes by meal type: \(error)")
+            return []
+        }
+    }
+    
+    func getAllMealTypes() -> [String] {
+        let request = NSFetchRequest<WeeklyPlanEntity>(entityName: "WeeklyPlanEntity")
+        
+        do {
+            let planEntities = try persistence.container.viewContext.fetch(request)
+            let mealTypes = Set(planEntities.compactMap { $0.mealType })
+            return Array(mealTypes).sorted()
+        } catch {
+            print("Error loading meal types: \(error)")
+            return []
+        }
+    }
+    
     // Legacy method for backward compatibility
     func removeRecipe(fromDay day: String) {
         let existingRecipes = weeklyPlan[day] ?? []
@@ -140,7 +233,7 @@ class RecipeManager: ObservableObject {
         }
     }
     
-    func saveRecipe(title: String, ingredients: [String], instructions: [String], tags: [String], imageData: Data? = nil, sourceURL: String? = nil) {
+    func saveRecipe(title: String, ingredients: [String], instructions: [String], tags: [String], imageData: Data? = nil, sourceURL: String? = nil, imageUrls: [String] = []) {
         let context = persistence.container.viewContext
         let recipe = RecipeEntity(context: context)
         
@@ -160,8 +253,16 @@ class RecipeManager: ObservableObject {
         if let tagsData = try? JSONEncoder().encode(tags) {
             recipe.tagsString = String(data: tagsData, encoding: .utf8)
         }
-        recipe.imageData = imageData
+        
         recipe.sourceURL = sourceURL
+        
+        // Handle image data - prioritize provided imageData, then try to download from URLs
+        if let imageData = imageData {
+            recipe.imageData = imageData
+        } else if !imageUrls.isEmpty {
+            // Try to download the first image
+            downloadAndSaveImage(for: recipe, from: imageUrls.first!)
+        }
         
         // Create searchable terms
         let searchableText = [title] + ingredients + tags
@@ -172,6 +273,38 @@ class RecipeManager: ObservableObject {
             loadRecipes()
         } catch {
             print("Error saving recipe: \(error)")
+        }
+    }
+    
+    private func downloadAndSaveImage(for recipe: RecipeEntity, from urlString: String) {
+        guard let url = URL(string: urlString) else { return }
+        
+        Task {
+            do {
+                let (data, response) = try await URLSession.shared.data(from: url)
+                
+                // Verify this is an image
+                if let httpResponse = response as? HTTPURLResponse,
+                   httpResponse.statusCode == 200,
+                   let mimeType = httpResponse.mimeType,
+                   mimeType.hasPrefix("image/") {
+                    
+                    // Update recipe with image data on main thread
+                    await MainActor.run {
+                        let context = persistence.container.viewContext
+                        recipe.imageData = data
+                        
+                        do {
+                            try context.save()
+                            loadRecipes()
+                        } catch {
+                            print("Error saving downloaded image: \(error)")
+                        }
+                    }
+                }
+            } catch {
+                print("Error downloading image: \(error)")
+            }
         }
     }
     

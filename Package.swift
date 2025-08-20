@@ -3,7 +3,7 @@ import PackageDescription
 
 let package = Package(
     name: "Mealplannerv3",
-    platforms: [.iOS(.v16), .macOS(.v10_15)],
+    platforms: [.iOS(.v16)],
     products: [
         .library(
             name: "Mealplannerv3",
@@ -22,20 +22,6 @@ let package = Package(
                 "Alamofire"
             ],
             path: "Mealplannerv3"
-        ),
-        .testTarget(
-            name: "Mealplannerv3Tests",
-            dependencies: [
-                "Mealplannerv3"
-            ],
-            path: "Mealplannerv3Tests"
-        ),
-        .testTarget(
-            name: "Mealplannerv3UITests",
-            dependencies: [
-                "Mealplannerv3"
-            ],
-            path: "Mealplannerv3UITests"
         ),
     ]
 )

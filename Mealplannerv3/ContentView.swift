@@ -23,7 +23,7 @@ struct ContentView: View {
     
     // Add the recipe extractor service
     private let recipeExtractorService = RecipeExtractorService()
-    private let googleCloudVisionService = GoogleCloudVisionService()
+    // Removed GoogleCloudVisionService - using iOS Vision framework instead
     
     private let extractors: [RecipeExtractor] = [
         JSONLDExtractor(),
@@ -115,47 +115,144 @@ struct ContentView: View {
                     ScrollView {
                         VStack(alignment: .leading, spacing: 16) {
                             Text(recipe.title)
-                                .font(.title)
+                                .font(.largeTitle)
                                 .fontWeight(.bold)
+                                .multilineTextAlignment(.leading)
                             
-                            if !recipe.images.isEmpty, let imageUrl = URL(string: recipe.images[0]) {
-                                AsyncImage(url: imageUrl) { phase in
-                                    switch phase {
-                                    case .empty:
-                                        ProgressView()
-                                    case .success(let image):
-                                        image
-                                            .resizable()
-                                            .aspectRatio(contentMode: .fit)
-                                    case .failure:
-                                        Image(systemName: "photo")
-                                    @unknown default:
-                                        EmptyView()
+                            if !recipe.images.isEmpty {
+                                ScrollView(.horizontal, showsIndicators: false) {
+                                    HStack(spacing: 12) {
+                                        ForEach(Array(recipe.images.enumerated()), id: \.offset) { index, imageUrlString in
+                                            if let imageUrl = URL(string: imageUrlString) {
+                                                AsyncImage(url: imageUrl) { phase in
+                                                    switch phase {
+                                                    case .empty:
+                                                        RoundedRectangle(cornerRadius: 12)
+                                                            .fill(Color.gray.opacity(0.3))
+                                                            .frame(width: 300, height: 200)
+                                                            .overlay(
+                                                                ProgressView()
+                                                                    .scaleEffect(1.2)
+                                                            )
+                                                    case .success(let image):
+                                                        image
+                                                            .resizable()
+                                                            .aspectRatio(contentMode: .fill)
+                                                            .frame(width: 300, height: 200)
+                                                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                                                            .shadow(color: .black.opacity(0.2), radius: 8, x: 0, y: 4)
+                                                    case .failure:
+                                                        RoundedRectangle(cornerRadius: 12)
+                                                            .fill(Color.gray.opacity(0.2))
+                                                            .frame(width: 300, height: 200)
+                                                            .overlay(
+                                                                VStack {
+                                                                    Image(systemName: "photo")
+                                                                        .font(.largeTitle)
+                                                                        .foregroundColor(.gray)
+                                                                    Text("Failed to load")
+                                                                        .font(.caption)
+                                                                        .foregroundColor(.gray)
+                                                                }
+                                                            )
+                                                    @unknown default:
+                                                        EmptyView()
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                    .padding(.horizontal)
+                                }
+                                .frame(height: 220)
+                            }
+                            
+                            VStack(alignment: .leading, spacing: 12) {
+                                HStack {
+                                    Image(systemName: "list.bullet")
+                                        .foregroundColor(.green)
+                                        .font(.title2)
+                                    Text("Ingredients")
+                                        .font(.title2)
+                                        .fontWeight(.semibold)
+                                }
+                                
+                                LazyVStack(alignment: .leading, spacing: 8) {
+                                    ForEach(Array(recipe.ingredients.enumerated()), id: \.offset) { index, ingredient in
+                                        HStack(alignment: .top, spacing: 12) {
+                                            Circle()
+                                                .fill(Color.green)
+                                                .frame(width: 8, height: 8)
+                                                .padding(.top, 6)
+                                            
+                                            Text(ingredient)
+                                                .font(.body)
+                                                .lineLimit(nil)
+                                                .multilineTextAlignment(.leading)
+                                            
+                                            Spacer()
+                                        }
+                                        .padding(.vertical, 2)
                                     }
                                 }
-                                .frame(height: 200)
                             }
+                            .padding(.vertical, 8)
+                            .padding(.horizontal, 16)
+                            .background(Color(.systemGray6))
+                            .cornerRadius(12)
                             
-                            Text("Ingredients")
-                                .font(.headline)
-                            
-                            ForEach(recipe.ingredients, id: \.self) { ingredient in
-                                Text("• \(ingredient)")
-                            }
-                            
-                            Text("Instructions")
-                                .font(.headline)
-                            
-                            if recipe.instructions.isEmpty {
-                                Text("No instructions found")
-                                    .foregroundColor(.red)
-                                    .italic()
-                            } else {
-                                ForEach(Array(recipe.instructions.enumerated()), id: \.element) { index, instruction in
-                                    Text("\(index + 1). \(instruction)")
-                                        .padding(.bottom, 4)
+                            VStack(alignment: .leading, spacing: 12) {
+                                HStack {
+                                    Image(systemName: "list.number")
+                                        .foregroundColor(.blue)
+                                        .font(.title2)
+                                    Text("Instructions")
+                                        .font(.title2)
+                                        .fontWeight(.semibold)
+                                }
+                                
+                                if recipe.instructions.isEmpty {
+                                    HStack {
+                                        Image(systemName: "exclamationmark.triangle")
+                                            .foregroundColor(.orange)
+                                        Text("No instructions found")
+                                            .foregroundColor(.orange)
+                                            .italic()
+                                    }
+                                    .padding(.vertical, 12)
+                                } else {
+                                    LazyVStack(alignment: .leading, spacing: 16) {
+                                        ForEach(Array(recipe.instructions.enumerated()), id: \.offset) { index, instruction in
+                                            HStack(alignment: .top, spacing: 12) {
+                                                ZStack {
+                                                    Circle()
+                                                        .fill(Color.blue)
+                                                        .frame(width: 28, height: 28)
+                                                    
+                                                    Text("\(index + 1)")
+                                                        .font(.system(size: 14, weight: .semibold))
+                                                        .foregroundColor(.white)
+                                                }
+                                                .padding(.top, 2)
+                                                
+                                                VStack(alignment: .leading, spacing: 4) {
+                                                    Text(instruction)
+                                                        .font(.body)
+                                                        .lineLimit(nil)
+                                                        .multilineTextAlignment(.leading)
+                                                }
+                                                
+                                                Spacer()
+                                            }
+                                            .padding(.vertical, 4)
+                                        }
+                                    }
                                 }
                             }
+                            .padding(.vertical, 8)
+                            .padding(.horizontal, 16)
+                            .background(Color(.systemGray6))
+                            .cornerRadius(12)
                             
                             // Tags section
                             VStack(alignment: .leading, spacing: 8) {
@@ -221,16 +318,27 @@ struct ContentView: View {
                             }
                             .padding(.vertical, 8)
                             
-                            // Add save button
+                            // Add save button with enhanced styling
                             Button(action: saveRecipe) {
-                                Text("Save Recipe")
-                                    .padding()
-                                    .frame(maxWidth: .infinity)
-                                    .background(Color.green)
-                                    .foregroundColor(.white)
-                                    .cornerRadius(8)
+                                HStack {
+                                    Image(systemName: "heart.fill")
+                                    Text("Save Recipe")
+                                        .fontWeight(.semibold)
+                                }
+                                .padding(.vertical, 16)
+                                .frame(maxWidth: .infinity)
+                                .background(
+                                    LinearGradient(
+                                        gradient: Gradient(colors: [Color.green, Color.green.opacity(0.8)]),
+                                        startPoint: .leading,
+                                        endPoint: .trailing
+                                    )
+                                )
+                                .foregroundColor(.white)
+                                .cornerRadius(12)
+                                .shadow(color: .green.opacity(0.3), radius: 8, x: 0, y: 4)
                             }
-                            .padding(.top, 20)
+                            .padding(.top, 24)
                             
                             // Add button to show raw text
                             if isImageExtractionMode {
@@ -250,7 +358,7 @@ struct ContentView: View {
                         .padding()
                     }
                     .sheet(isPresented: $showingRawTextSheet) {
-                        RawTextView(rawText: googleCloudVisionService.getLastExtractedRawText())
+                        RawTextView(rawText: "Raw text viewing disabled - using iOS Vision framework")
                     }
                 }
                 
@@ -276,7 +384,8 @@ struct ContentView: View {
         isLoading = true
         
         Task {
-            let result = await googleCloudVisionService.testAPIConnection()
+            // Disabled Google Cloud Vision API test - using iOS Vision framework
+            let result = (success: false, message: "Google Cloud Vision API disabled - using iOS Vision framework instead")
             
             await MainActor.run {
                 isLoading = false
@@ -342,7 +451,7 @@ struct ContentView: View {
                         title: recipe.title,
                         ingredients: recipe.ingredients,
                         instructions: recipe.instructions,
-                        images: recipe.images ?? []
+                        images: recipe.images
                     )
                     isLoading = false
                     
@@ -421,14 +530,15 @@ struct ContentView: View {
         // Filter out empty tags
         let validTags = tags.filter { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
         
-        // Save the recipe
+        // Save the recipe with image URLs for download
         recipeManager.saveRecipe(
             title: recipe.title,
             ingredients: recipe.ingredients,
             instructions: recipe.instructions,
             tags: validTags,
             imageData: selectedImageData,
-            sourceURL: recipeUrl
+            sourceURL: recipeUrl,
+            imageUrls: recipe.images
         )
         
         saveSuccess = true

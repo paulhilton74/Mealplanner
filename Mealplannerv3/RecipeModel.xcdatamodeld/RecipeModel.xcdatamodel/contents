@@ -9,11 +9,12 @@
         <attribute name="dateAdded" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="imageData" optional="YES" attributeType="Binary"/>
-        <attribute name="ingredientsString" attributeType="String" valueTransformerName="StringArrayTransformer" customClassName="[String]"/>
-        <attribute name="instructionsString" attributeType="String" valueTransformerName="StringArrayTransformer" customClassName="[String]"/>
+        <attribute name="ingredientsString" optional="YES" attributeType="String"/>
+        <attribute name="instructionsString" optional="YES" attributeType="String"/>
+        <attribute name="rating" optional="YES" attributeType="Float" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="searchTerms" optional="YES" attributeType="String"/>
         <attribute name="sourceURL" optional="YES" attributeType="String"/>
-        <attribute name="tagsString" optional="YES" attributeType="String" valueTransformerName="StringArrayTransformer" customClassName="[String]"/>
+        <attribute name="tagsString" optional="YES" attributeType="String"/>
         <attribute name="title" attributeType="String"/>
         <relationship name="mealPlans" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="MealPlan" inverseName="recipe" inverseEntity="MealPlan"/>
         <relationship name="weeklyPlans" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="WeeklyPlanEntity" inverseName="recipe" inverseEntity="WeeklyPlanEntity"/>
@@ -35,6 +36,16 @@
     <entity name="WeeklyPlanEntity" representedClassName="WeeklyPlanEntity" syncable="YES">
         <attribute name="dayOfWeek" attributeType="String"/>
         <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="mealType" optional="YES" attributeType="String" defaultValueString="Dinner"/>
         <relationship name="recipe" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="RecipeEntity" inverseName="weeklyPlans" inverseEntity="RecipeEntity"/>
+    </entity>
+    <entity name="FridgeItem" representedClassName="FridgeItem" syncable="YES" codeGenerationType="class">
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="name" attributeType="String"/>
+        <attribute name="expiryDate" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="dateAdded" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="category" optional="YES" attributeType="String"/>
+        <attribute name="imageData" optional="YES" attributeType="Binary"/>
+        <attribute name="notes" optional="YES" attributeType="String"/>
     </entity>
 </model>

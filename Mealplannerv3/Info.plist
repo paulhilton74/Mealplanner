@@ -93,6 +93,10 @@
 			</array>
 		</dict>
 	</array>
+	<key>NSCameraUsageDescription</key>
+	<string>This app needs camera access to capture photos of food items for your fridge tracker.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This app needs photo library access to select photos of food items for your fridge tracker.</string>
 	<key>UTExportedTypeDeclarations</key>
 	<array>
 		<dict>

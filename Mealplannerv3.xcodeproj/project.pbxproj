@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4FA950DF2E4CA25300232490 /* Read-Later Share Extension Extension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 4FA950DE2E4CA25300232490 /* Read-Later Share Extension Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		4FA950E92E4CA25300232490 /* Read-Later Share Extension Extension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 4FA950E82E4CA25300232490 /* Read-Later Share Extension Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		4FB7CFAC2D735BEB00FF278F /* SwiftUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FB7CFAB2D735BEB00FF278F /* SwiftUIView.swift */; };
 		4FD7B0442D68C99B003FABE9 /* OpenAIKit in Frameworks */ = {isa = PBXBuildFile; productRef = 4FD7B0432D68C99B003FABE9 /* OpenAIKit */; };
 		4FD7B0462D68C9B3003FABE9 /* OpenAIKit in Frameworks */ = {isa = PBXBuildFile; productRef = 4FD7B0452D68C9B3003FABE9 /* OpenAIKit */; };
@@ -27,12 +29,55 @@
 			remoteGlobalIDString = 4F642ABA2D63E9E700F7E1D4;
 			remoteInfo = Mealplannerv3;
 		};
+		4FA950E02E4CA25300232490 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4F642AB32D63E9E700F7E1D4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4FA950DD2E4CA25300232490;
+			remoteInfo = "Read-Later Share Extension Extension (iOS)";
+		};
+		4FA950EA2E4CA25300232490 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4F642AB32D63E9E700F7E1D4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4FA950E72E4CA25300232490;
+			remoteInfo = "Read-Later Share Extension Extension (macOS)";
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		4FA951122E4CA25300232490 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				4FA950DF2E4CA25300232490 /* Read-Later Share Extension Extension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4FA9511C2E4CA25300232490 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				4FA950E92E4CA25300232490 /* Read-Later Share Extension Extension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		4F642ABB2D63E9E700F7E1D4 /* Mealplannerv3.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Mealplannerv3.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4F642ACB2D63E9E800F7E1D4 /* Mealplannerv3Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Mealplannerv3Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4F642AD52D63E9E800F7E1D4 /* Mealplannerv3UITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Mealplannerv3UITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		4FA950C12E4CA25300232490 /* Read-Later Share Extension.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Read-Later Share Extension.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		4FA950D22E4CA25300232490 /* Read-Later Share Extension.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Read-Later Share Extension.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		4FA950DE2E4CA25300232490 /* Read-Later Share Extension Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Read-Later Share Extension Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		4FA950E82E4CA25300232490 /* Read-Later Share Extension Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Read-Later Share Extension Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4FB7CFAB2D735BEB00FF278F /* SwiftUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUIView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -43,6 +88,81 @@
 				Info.plist,
 			);
 			target = 4F642ABA2D63E9E700F7E1D4 /* Mealplannerv3 */;
+		};
+		4FA9510D2E4CA25300232490 /* Exceptions for "Shared (App)" folder in "Read-Later Share Extension (iOS)" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"/Localized: Resources/Main.html",
+				Assets.xcassets,
+				Resources/Icon.png,
+				Resources/Script.js,
+				Resources/Style.css,
+				ViewController.swift,
+			);
+			target = 4FA950C02E4CA25300232490 /* Read-Later Share Extension (iOS) */;
+		};
+		4FA951112E4CA25300232490 /* Exceptions for "iOS (Extension)" folder in "Read-Later Share Extension Extension (iOS)" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 4FA950DD2E4CA25300232490 /* Read-Later Share Extension Extension (iOS) */;
+		};
+		4FA951162E4CA25300232490 /* Exceptions for "iOS (App)" folder in "Read-Later Share Extension (iOS)" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 4FA950C02E4CA25300232490 /* Read-Later Share Extension (iOS) */;
+		};
+		4FA951172E4CA25300232490 /* Exceptions for "Shared (App)" folder in "Read-Later Share Extension (macOS)" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"/Localized: Resources/Main.html",
+				Assets.xcassets,
+				Resources/Icon.png,
+				Resources/Script.js,
+				Resources/Style.css,
+				ViewController.swift,
+			);
+			target = 4FA950D12E4CA25300232490 /* Read-Later Share Extension (macOS) */;
+		};
+		4FA9511B2E4CA25300232490 /* Exceptions for "macOS (Extension)" folder in "Read-Later Share Extension Extension (macOS)" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 4FA950E72E4CA25300232490 /* Read-Later Share Extension Extension (macOS) */;
+		};
+		4FA951202E4CA25300232490 /* Exceptions for "Shared (Extension)" folder in "Read-Later Share Extension Extension (iOS)" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Resources/_locales,
+				Resources/background.js,
+				Resources/content.js,
+				Resources/images,
+				Resources/manifest.json,
+				Resources/popup.css,
+				Resources/popup.html,
+				Resources/popup.js,
+				SafariWebExtensionHandler.swift,
+			);
+			target = 4FA950DD2E4CA25300232490 /* Read-Later Share Extension Extension (iOS) */;
+		};
+		4FA951212E4CA25300232490 /* Exceptions for "Shared (Extension)" folder in "Read-Later Share Extension Extension (macOS)" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Resources/_locales,
+				Resources/background.js,
+				Resources/content.js,
+				Resources/images,
+				Resources/manifest.json,
+				Resources/popup.css,
+				Resources/popup.html,
+				Resources/popup.js,
+				SafariWebExtensionHandler.swift,
+			);
+			target = 4FA950E72E4CA25300232490 /* Read-Later Share Extension Extension (macOS) */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
@@ -63,6 +183,57 @@
 		4F642AD82D63E9E800F7E1D4 /* Mealplannerv3UITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = Mealplannerv3UITests;
+			sourceTree = "<group>";
+		};
+		4FA950A92E4CA25100232490 /* Shared (App) */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				4FA9510D2E4CA25300232490 /* Exceptions for "Shared (App)" folder in "Read-Later Share Extension (iOS)" target */,
+				4FA951172E4CA25300232490 /* Exceptions for "Shared (App)" folder in "Read-Later Share Extension (macOS)" target */,
+			);
+			path = "Shared (App)";
+			sourceTree = "<group>";
+		};
+		4FA950B22E4CA25300232490 /* Shared (Extension) */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				4FA951202E4CA25300232490 /* Exceptions for "Shared (Extension)" folder in "Read-Later Share Extension Extension (iOS)" target */,
+				4FA951212E4CA25300232490 /* Exceptions for "Shared (Extension)" folder in "Read-Later Share Extension Extension (macOS)" target */,
+			);
+			explicitFolders = (
+				Resources/_locales,
+				Resources/images,
+			);
+			path = "Shared (Extension)";
+			sourceTree = "<group>";
+		};
+		4FA950C22E4CA25300232490 /* iOS (App) */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				4FA951162E4CA25300232490 /* Exceptions for "iOS (App)" folder in "Read-Later Share Extension (iOS)" target */,
+			);
+			path = "iOS (App)";
+			sourceTree = "<group>";
+		};
+		4FA950D32E4CA25300232490 /* macOS (App) */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "macOS (App)";
+			sourceTree = "<group>";
+		};
+		4FA950E22E4CA25300232490 /* iOS (Extension) */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				4FA951112E4CA25300232490 /* Exceptions for "iOS (Extension)" folder in "Read-Later Share Extension Extension (iOS)" target */,
+			);
+			path = "iOS (Extension)";
+			sourceTree = "<group>";
+		};
+		4FA950EC2E4CA25300232490 /* macOS (Extension) */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				4FA9511B2E4CA25300232490 /* Exceptions for "macOS (Extension)" folder in "Read-Later Share Extension Extension (macOS)" target */,
+			);
+			path = "macOS (Extension)";
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -91,6 +262,34 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		4FA950BE2E4CA25300232490 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4FA950CF2E4CA25300232490 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4FA950DB2E4CA25300232490 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4FA950E52E4CA25300232490 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -101,6 +300,12 @@
 				4F642ABD2D63E9E700F7E1D4 /* Mealplannerv3 */,
 				4F642ACE2D63E9E800F7E1D4 /* Mealplannerv3Tests */,
 				4F642AD82D63E9E800F7E1D4 /* Mealplannerv3UITests */,
+				4FA950A92E4CA25100232490 /* Shared (App) */,
+				4FA950B22E4CA25300232490 /* Shared (Extension) */,
+				4FA950C22E4CA25300232490 /* iOS (App) */,
+				4FA950D32E4CA25300232490 /* macOS (App) */,
+				4FA950E22E4CA25300232490 /* iOS (Extension) */,
+				4FA950EC2E4CA25300232490 /* macOS (Extension) */,
 				4FB450332D68C21900AC8848 /* Frameworks */,
 				4F642ABC2D63E9E700F7E1D4 /* Products */,
 			);
@@ -112,6 +317,10 @@
 				4F642ABB2D63E9E700F7E1D4 /* Mealplannerv3.app */,
 				4F642ACB2D63E9E800F7E1D4 /* Mealplannerv3Tests.xctest */,
 				4F642AD52D63E9E800F7E1D4 /* Mealplannerv3UITests.xctest */,
+				4FA950C12E4CA25300232490 /* Read-Later Share Extension.app */,
+				4FA950D22E4CA25300232490 /* Read-Later Share Extension.app */,
+				4FA950DE2E4CA25300232490 /* Read-Later Share Extension Extension.appex */,
+				4FA950E82E4CA25300232490 /* Read-Later Share Extension Extension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -196,6 +405,98 @@
 			productReference = 4F642AD52D63E9E800F7E1D4 /* Mealplannerv3UITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		4FA950C02E4CA25300232490 /* Read-Later Share Extension (iOS) */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4FA951132E4CA25300232490 /* Build configuration list for PBXNativeTarget "Read-Later Share Extension (iOS)" */;
+			buildPhases = (
+				4FA950BD2E4CA25300232490 /* Sources */,
+				4FA950BE2E4CA25300232490 /* Frameworks */,
+				4FA950BF2E4CA25300232490 /* Resources */,
+				4FA951122E4CA25300232490 /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				4FA950E12E4CA25300232490 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				4FA950C22E4CA25300232490 /* iOS (App) */,
+			);
+			name = "Read-Later Share Extension (iOS)";
+			packageProductDependencies = (
+			);
+			productName = "Read-Later Share Extension (iOS)";
+			productReference = 4FA950C12E4CA25300232490 /* Read-Later Share Extension.app */;
+			productType = "com.apple.product-type.application";
+		};
+		4FA950D12E4CA25300232490 /* Read-Later Share Extension (macOS) */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4FA9511D2E4CA25300232490 /* Build configuration list for PBXNativeTarget "Read-Later Share Extension (macOS)" */;
+			buildPhases = (
+				4FA950CE2E4CA25300232490 /* Sources */,
+				4FA950CF2E4CA25300232490 /* Frameworks */,
+				4FA950D02E4CA25300232490 /* Resources */,
+				4FA9511C2E4CA25300232490 /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				4FA950EB2E4CA25300232490 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				4FA950D32E4CA25300232490 /* macOS (App) */,
+			);
+			name = "Read-Later Share Extension (macOS)";
+			packageProductDependencies = (
+			);
+			productName = "Read-Later Share Extension (macOS)";
+			productReference = 4FA950D22E4CA25300232490 /* Read-Later Share Extension.app */;
+			productType = "com.apple.product-type.application";
+		};
+		4FA950DD2E4CA25300232490 /* Read-Later Share Extension Extension (iOS) */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4FA9510E2E4CA25300232490 /* Build configuration list for PBXNativeTarget "Read-Later Share Extension Extension (iOS)" */;
+			buildPhases = (
+				4FA950DA2E4CA25300232490 /* Sources */,
+				4FA950DB2E4CA25300232490 /* Frameworks */,
+				4FA950DC2E4CA25300232490 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				4FA950E22E4CA25300232490 /* iOS (Extension) */,
+			);
+			name = "Read-Later Share Extension Extension (iOS)";
+			packageProductDependencies = (
+			);
+			productName = "Read-Later Share Extension Extension (iOS)";
+			productReference = 4FA950DE2E4CA25300232490 /* Read-Later Share Extension Extension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		4FA950E72E4CA25300232490 /* Read-Later Share Extension Extension (macOS) */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4FA951182E4CA25300232490 /* Build configuration list for PBXNativeTarget "Read-Later Share Extension Extension (macOS)" */;
+			buildPhases = (
+				4FA950E42E4CA25300232490 /* Sources */,
+				4FA950E52E4CA25300232490 /* Frameworks */,
+				4FA950E62E4CA25300232490 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				4FA950EC2E4CA25300232490 /* macOS (Extension) */,
+			);
+			name = "Read-Later Share Extension Extension (macOS)";
+			packageProductDependencies = (
+			);
+			productName = "Read-Later Share Extension Extension (macOS)";
+			productReference = 4FA950E82E4CA25300232490 /* Read-Later Share Extension Extension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -203,8 +504,8 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1620;
-				LastUpgradeCheck = 1620;
+				LastSwiftUpdateCheck = 1640;
+				LastUpgradeCheck = 1640;
 				TargetAttributes = {
 					4F642ABA2D63E9E700F7E1D4 = {
 						CreatedOnToolsVersion = 16.2;
@@ -216,6 +517,18 @@
 					4F642AD42D63E9E800F7E1D4 = {
 						CreatedOnToolsVersion = 16.2;
 						TestTargetID = 4F642ABA2D63E9E700F7E1D4;
+					};
+					4FA950C02E4CA25300232490 = {
+						CreatedOnToolsVersion = 16.4;
+					};
+					4FA950D12E4CA25300232490 = {
+						CreatedOnToolsVersion = 16.4;
+					};
+					4FA950DD2E4CA25300232490 = {
+						CreatedOnToolsVersion = 16.4;
+					};
+					4FA950E72E4CA25300232490 = {
+						CreatedOnToolsVersion = 16.4;
 					};
 				};
 			};
@@ -238,6 +551,10 @@
 				4F642ABA2D63E9E700F7E1D4 /* Mealplannerv3 */,
 				4F642ACA2D63E9E800F7E1D4 /* Mealplannerv3Tests */,
 				4F642AD42D63E9E800F7E1D4 /* Mealplannerv3UITests */,
+				4FA950C02E4CA25300232490 /* Read-Later Share Extension (iOS) */,
+				4FA950D12E4CA25300232490 /* Read-Later Share Extension (macOS) */,
+				4FA950DD2E4CA25300232490 /* Read-Later Share Extension Extension (iOS) */,
+				4FA950E72E4CA25300232490 /* Read-Later Share Extension Extension (macOS) */,
 			);
 		};
 /* End PBXProject section */
@@ -258,6 +575,34 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		4F642AD32D63E9E800F7E1D4 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4FA950BF2E4CA25300232490 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4FA950D02E4CA25300232490 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4FA950DC2E4CA25300232490 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4FA950E62E4CA25300232490 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -289,6 +634,34 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		4FA950BD2E4CA25300232490 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4FA950CE2E4CA25300232490 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4FA950DA2E4CA25300232490 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4FA950E42E4CA25300232490 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -301,6 +674,16 @@
 			isa = PBXTargetDependency;
 			target = 4F642ABA2D63E9E700F7E1D4 /* Mealplannerv3 */;
 			targetProxy = 4F642AD62D63E9E800F7E1D4 /* PBXContainerItemProxy */;
+		};
+		4FA950E12E4CA25300232490 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4FA950DD2E4CA25300232490 /* Read-Later Share Extension Extension (iOS) */;
+			targetProxy = 4FA950E02E4CA25300232490 /* PBXContainerItemProxy */;
+		};
+		4FA950EB2E4CA25300232490 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4FA950E72E4CA25300232490 /* Read-Later Share Extension Extension (macOS) */;
+			targetProxy = 4FA950EA2E4CA25300232490 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -436,6 +819,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Mealplannerv3/Preview Content\"";
+				DEVELOPMENT_TEAM = 65MR6LM4NC;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "";
@@ -465,6 +849,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Mealplannerv3/Preview Content\"";
+				DEVELOPMENT_TEAM = 65MR6LM4NC;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "";
@@ -554,6 +939,268 @@
 			};
 			name = Release;
 		};
+		4FA9510F2E4CA25300232490 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "iOS (Extension)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Read-Later Share Extension Extension";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "Paul.Read-Later-App.Read-Later-Share-Extension.Mealplannerv3.Extension";
+				PRODUCT_NAME = "Read-Later Share Extension Extension";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		4FA951102E4CA25300232490 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "iOS (Extension)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Read-Later Share Extension Extension";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "Paul.Read-Later-App.Read-Later-Share-Extension.Mealplannerv3.Extension";
+				PRODUCT_NAME = "Read-Later Share Extension Extension";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		4FA951142E4CA25300232490 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "iOS (App)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Read-Later Share Extension";
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+					"-framework",
+					WebKit,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "Paul.Read-Later-App.Read-Later-Share-Extension.Read-Later-Share-Extension";
+				PRODUCT_NAME = "Read-Later Share Extension";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		4FA951152E4CA25300232490 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "iOS (App)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Read-Later Share Extension";
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+					"-framework",
+					WebKit,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "Paul.Read-Later-App.Read-Later-Share-Extension.Read-Later-Share-Extension";
+				PRODUCT_NAME = "Read-Later Share Extension";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		4FA951192E4CA25300232490 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "macOS (Extension)/Read-Later Share Extension.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "macOS (Extension)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Read-Later Share Extension Extension";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "Paul.Read-Later-App.Read-Later-Share-Extension.Mealplannerv3.Extension";
+				PRODUCT_NAME = "Read-Later Share Extension Extension";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		4FA9511A2E4CA25300232490 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "macOS (Extension)/Read-Later Share Extension.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "macOS (Extension)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Read-Later Share Extension Extension";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "Paul.Read-Later-App.Read-Later-Share-Extension.Mealplannerv3.Extension";
+				PRODUCT_NAME = "Read-Later Share Extension Extension";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		4FA9511E2E4CA25300232490 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "macOS (App)/Read-Later Share Extension.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Read-Later Share Extension";
+				INFOPLIST_KEY_NSMainStoryboardFile = Main;
+				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+					"-framework",
+					WebKit,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "Paul.Read-Later-App.Read-Later-Share-Extension.Read-Later-Share-Extension";
+				PRODUCT_NAME = "Read-Later Share Extension";
+				REGISTER_APP_GROUPS = YES;
+				SDKROOT = macosx;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		4FA9511F2E4CA25300232490 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "macOS (App)/Read-Later Share Extension.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Read-Later Share Extension";
+				INFOPLIST_KEY_NSMainStoryboardFile = Main;
+				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+					"-framework",
+					WebKit,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "Paul.Read-Later-App.Read-Later-Share-Extension.Read-Later-Share-Extension";
+				PRODUCT_NAME = "Read-Later Share Extension";
+				REGISTER_APP_GROUPS = YES;
+				SDKROOT = macosx;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -589,6 +1236,42 @@
 			buildConfigurations = (
 				4F642AE62D63E9E800F7E1D4 /* Debug */,
 				4F642AE72D63E9E800F7E1D4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4FA9510E2E4CA25300232490 /* Build configuration list for PBXNativeTarget "Read-Later Share Extension Extension (iOS)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4FA9510F2E4CA25300232490 /* Debug */,
+				4FA951102E4CA25300232490 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4FA951132E4CA25300232490 /* Build configuration list for PBXNativeTarget "Read-Later Share Extension (iOS)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4FA951142E4CA25300232490 /* Debug */,
+				4FA951152E4CA25300232490 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4FA951182E4CA25300232490 /* Build configuration list for PBXNativeTarget "Read-Later Share Extension Extension (macOS)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4FA951192E4CA25300232490 /* Debug */,
+				4FA9511A2E4CA25300232490 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4FA9511D2E4CA25300232490 /* Build configuration list for PBXNativeTarget "Read-Later Share Extension (macOS)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4FA9511E2E4CA25300232490 /* Debug */,
+				4FA9511F2E4CA25300232490 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

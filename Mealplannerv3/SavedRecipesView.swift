@@ -209,6 +209,11 @@ struct RecipeRow: View {
                         .font(.caption)
                         .foregroundColor(.gray)
                 }
+                
+                if recipe.hasRating {
+                    CompactStarRating(rating: recipe.rating)
+                        .padding(.top, 2)
+                }
             }
         }
         .padding(.vertical, 8)

@@ -32,6 +32,7 @@ struct AddRecipeView: View {
     @State private var isExtracting = false
     @State private var nutritionInfo = NutritionInfo.defaultValues
     @State private var showingNutritionSheet = false
+    @State private var selectedMealTypes: Set<MealType> = []
 
     var body: some View {
         NavigationView {
@@ -56,8 +57,7 @@ struct AddRecipeView: View {
                             saveRecipe()
                         }
                         .disabled(title.isEmpty ||
-                                  ingredients.allSatisfy { $0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty } ||
-                                  instructions.allSatisfy { $0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty })
+                                  ingredients.allSatisfy { $0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty })
                     }
                 }
             }
@@ -165,9 +165,23 @@ struct AddRecipeView: View {
                         }
                         .onChange(of: selectedItem) { _, newValue in
                             Task {
+                                print("=== IMAGE SELECTION DEBUG ===")
                                 if let data = try? await newValue?.loadTransferable(type: Data.self) {
-                                    selectedImageData = data
-                                    // Don't automatically extract - let user control this
+                                    print("Raw image data loaded: \(data.count) bytes")
+                                    
+                                    // Process and compress the image data
+                                    let processedData = processImageData(data)
+                                    
+                                    await MainActor.run {
+                                        selectedImageData = processedData
+                                        print("✅ Processed image data stored. Size: \(processedData?.count ?? 0) bytes")
+                                        print("✅ selectedImageData is now set: \(selectedImageData != nil)")
+                                    }
+                                } else {
+                                    print("❌ Failed to load image data from PhotosPicker")
+                                    await MainActor.run {
+                                        selectedImageData = nil
+                                    }
                                 }
                             }
                         }
@@ -270,6 +284,20 @@ struct AddRecipeView: View {
                 NutritionDialRow(nutritionInfo: nutritionInfo)
                     .frame(height: 100)
                     .padding(.vertical, 8)
+            }
+            
+            Section {
+                MealTypeTagSelector(
+                    selectedMealTypes: $selectedMealTypes,
+                    title: "Quick Tag for Meal Types",
+                    showTitle: true
+                )
+            } header: {
+                Text("Meal Type Tags")
+            } footer: {
+                Text("Select which meal types this recipe is suitable for. This helps with organizing your weekly meal plans.")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
             }
         }
     }
@@ -580,29 +608,81 @@ struct AddRecipeView: View {
         URLSession.shared.dataTask(with: url) { data, response, error in
             DispatchQueue.main.async {
                 if let data = data {
-                    self.selectedImageData = data
+                    self.selectedImageData = self.processImageData(data)
+                    print("Downloaded and processed image from URL. Size: \(self.selectedImageData?.count ?? 0) bytes")
                 }
             }
         }.resume()
     }
+    
+    private func processImageData(_ data: Data) -> Data? {
+        print("=== PROCESS IMAGE DATA DEBUG ===")
+        print("Input data size: \(data.count) bytes")
+        
+        guard let image = UIImage(data: data) else { 
+            print("❌ Failed to create UIImage from data")
+            return data 
+        }
+        
+        print("✅ UIImage created successfully. Size: \(image.size)")
+        
+        // Resize image if it's too large to save storage space
+        let maxSize: CGFloat = 1024
+        let size = image.size
+        
+        if size.width > maxSize || size.height > maxSize {
+            print("📏 Image is large (\(size)), resizing...")
+            let ratio = min(maxSize / size.width, maxSize / size.height)
+            let newSize = CGSize(width: size.width * ratio, height: size.height * ratio)
+            
+            UIGraphicsBeginImageContextWithOptions(newSize, false, 1.0)
+            image.draw(in: CGRect(origin: .zero, size: newSize))
+            let resizedImage = UIGraphicsGetImageFromCurrentImageContext()
+            UIGraphicsEndImageContext()
+            
+            if let resizedImage = resizedImage,
+               let compressedData = resizedImage.jpegData(compressionQuality: 0.8) {
+                print("✅ Image resized from \(size) to \(newSize). Compressed size: \(compressedData.count) bytes")
+                return compressedData
+            } else {
+                print("❌ Failed to resize image, returning original")
+                return data
+            }
+        }
+        
+        // If no resizing needed, just compress
+        if let compressedData = image.jpegData(compressionQuality: 0.8) {
+            print("✅ Image compressed without resizing. Size: \(compressedData.count) bytes")
+            return compressedData
+        }
+        
+        print("❌ Compression failed, returning original data")
+        return data
+    }
 
     private func extractRecipeFromImage() {
+        print("=== EXTRACT RECIPE FROM IMAGE DEBUG ===")
+        print("selectedImageData at start: \(selectedImageData?.count ?? 0) bytes")
+        
         guard let imageData = selectedImageData, let uiImage = UIImage(data: imageData) else { 
-            print("Error: No image data or unable to create UIImage")
+            print("❌ Error: No image data or unable to create UIImage")
+            print("selectedImageData is nil: \(selectedImageData == nil)")
             return 
         }
         
         isExtracting = true
-        print("Starting recipe extraction from image... Image size: \(uiImage.size.width)x\(uiImage.size.height)")
+        print("✅ Starting recipe extraction from image... Image size: \(uiImage.size.width)x\(uiImage.size.height)")
+        print("Image data being used for OCR: \(imageData.count) bytes")
         
-        // Create a background task for OCR processing
+        // Use local Vision framework instead of Google Cloud Vision
+        print("Using local iOS Vision framework for OCR")
+        
+        // Create a background task for OCR processing using local Vision framework
         Task {
-            // Try multiple approaches to extract text
-            
             // First attempt: Original image
-            print("Starting OCR processing on original image...")
+            print("Starting local OCR processing on original image...")
             let extractedText = await performOCR(on: uiImage)
-            print("OCR completed. Extracted text length: \(extractedText.count) characters")
+            print("Local OCR completed. Extracted text length: \(extractedText.count) characters")
             
             if extractedText.isEmpty || extractedText.count < 50 {
                 print("No text or insufficient text extracted from image. Trying with enhanced image...")
@@ -616,32 +696,38 @@ struct AddRecipeView: View {
                     print("Still insufficient text. Trying with rotated image...")
                     
                     // Third attempt: Try with rotated image (sometimes OCR works better on different orientations)
-                    let rotatedImage = UIImage(cgImage: uiImage.cgImage!, scale: uiImage.scale, orientation: .right)
-                    let thirdAttemptText = await performOCR(on: enhanceImageForOCR(rotatedImage))
-                    print("Rotated OCR completed. Extracted text length: \(thirdAttemptText.count) characters")
-                    
-                    if thirdAttemptText.isEmpty || thirdAttemptText.count < 50 {
-                        await MainActor.run {
-                            isExtracting = false
-                            print("Error: No text was extracted from the image after multiple attempts")
-                            
-                            // Set default values since extraction failed
-                            if self.title.isEmpty {
-                                self.title = "Recipe from Image"
+                    if let cgImage = uiImage.cgImage {
+                        let rotatedImage = UIImage(cgImage: cgImage, scale: uiImage.scale, orientation: .right)
+                        let thirdAttemptText = await performOCR(on: enhanceImageForOCR(rotatedImage))
+                        print("Rotated OCR completed. Extracted text length: \(thirdAttemptText.count) characters")
+                        
+                        if thirdAttemptText.isEmpty || thirdAttemptText.count < 50 {
+                            await MainActor.run {
+                                isExtracting = false
+                                print("Error: No text was extracted from the image after multiple attempts")
+                                
+                                // Set default values since extraction failed
+                                if self.title.isEmpty {
+                                    self.title = "Recipe from Image"
+                                }
+                                
+                                if self.ingredients.count == 1 && self.ingredients[0].isEmpty {
+                                    self.ingredients = ["No ingredients detected. Please add manually."]
+                                }
+                                
+                                if self.instructions.count == 1 && self.instructions[0].isEmpty {
+                                    self.instructions = ["No instructions detected. Please add manually."]
+                                }
+                                
+                                print("Image data preserved after failed extraction: \(self.selectedImageData?.count ?? 0) bytes")
                             }
-                            
-                            if self.ingredients.count == 1 && self.ingredients[0].isEmpty {
-                                self.ingredients = ["No ingredients detected. Please add manually."]
-                            }
-                            
-                            if self.instructions.count == 1 && self.instructions[0].isEmpty {
-                                self.instructions = ["No instructions detected. Please add manually."]
-                            }
+                            return
+                        } else {
+                            print("Third attempt extracted \(thirdAttemptText.count) characters")
+                            await processExtractedTextAndUpdateUI(thirdAttemptText)
                         }
-                        return
                     } else {
-                        print("Third attempt extracted \(thirdAttemptText.count) characters")
-                        await processExtractedTextAndUpdateUI(thirdAttemptText)
+                        await processExtractedTextAndUpdateUI(secondAttemptText.isEmpty ? "Recipe from Image" : secondAttemptText)
                     }
                 } else {
                     print("Second attempt extracted \(secondAttemptText.count) characters")
@@ -649,6 +735,7 @@ struct AddRecipeView: View {
                 }
             } else {
                 // Continue with the text from the first attempt
+                print("First attempt successful, processing \(extractedText.count) characters")
                 await processExtractedTextAndUpdateUI(extractedText)
             }
         }
@@ -695,6 +782,7 @@ struct AddRecipeView: View {
             
             print("Recipe extraction complete: \(self.title)")
             print("Found \(extractedIngredients.count) ingredients and \(extractedInstructions.count) instructions")
+            print("Image data after extraction: \(self.selectedImageData?.count ?? 0) bytes")
         }
     }
     
@@ -901,11 +989,11 @@ struct AddRecipeView: View {
         var ingredients: [String] = []
         var instructions: [String] = []
         var currentSection: RecipeSection = .unknown
+        let _ = false // ingredientSectionFound - removed unused variable
+        let _ = false // instructionSectionFound - removed unused variable
         
         // First pass: Look for explicit section headers
         print("First pass: Looking for section headers")
-        var ingredientSectionFound = false
-        var instructionSectionFound = false
         
         for (index, line) in lines.enumerated() {
             let lowercaseLine = line.lowercased()
@@ -918,7 +1006,6 @@ struct AddRecipeView: View {
                lowercaseLine == "what you need" ||
                lowercaseLine.hasSuffix("what you need:") {
                 currentSection = .ingredients
-                ingredientSectionFound = true
                 print("Found ingredients section at line \(index): \(line)")
                 continue
             } 
@@ -936,7 +1023,6 @@ struct AddRecipeView: View {
                lowercaseLine == "what to do" ||
                lowercaseLine.hasSuffix("what to do:") {
                 currentSection = .instructions
-                instructionSectionFound = true
                 print("Found instructions section at line \(index): \(line)")
                 continue
             }
@@ -1053,7 +1139,7 @@ struct AddRecipeView: View {
             print("Last resort: Using simple heuristic to split content")
             
             // Analyze line lengths to determine a potential split point
-            var lineLengths = lines.map { $0.count }
+            let lineLengths = lines.map { $0.count }
             var potentialSplitPoints: [Int] = []
             
             // Look for significant changes in line length that might indicate a section change
@@ -1341,18 +1427,50 @@ struct AddRecipeView: View {
     }
 
     private func saveRecipe() {
+        print("=== COMPREHENSIVE SAVE RECIPE DEBUG ===")
+        print("Title: '\(title)'")
+        print("Ingredients count: \(ingredients.count)")
+        print("Instructions count: \(instructions.count)")
+        print("Selected image data: \(selectedImageData?.count ?? 0) bytes")
+        print("Source URL: '\(sourceURL)'")
+        print("selectedImageData memory address: \(Unmanaged.passUnretained(selectedImageData as AnyObject? ?? NSNull()).toOpaque())")
+        
+        // Create recipe entity
         let recipe = RecipeEntity(context: viewContext)
         recipe.id = UUID()
         recipe.title = title
         recipe.sourceURL = sourceURL
-        recipe.imageData = selectedImageData
+        recipe.dateAdded = Date()
+        
+        // Critical: Set image data BEFORE any other operations
+        if let imageData = selectedImageData {
+            print("🔍 About to set imageData on recipe entity...")
+            print("🔍 Image data size: \(imageData.count) bytes")
+            print("🔍 Image data first 10 bytes: \(Array(imageData.prefix(10)))")
+            
+            recipe.imageData = imageData
+            
+            // Immediately verify it was set
+            if let savedImageData = recipe.imageData {
+                print("✅ CONFIRMED: Recipe.imageData was set successfully. Size: \(savedImageData.count) bytes")
+                print("✅ Verification: First 10 bytes match: \(Array(savedImageData.prefix(10)) == Array(imageData.prefix(10)))")
+            } else {
+                print("❌ CRITICAL ERROR: Recipe.imageData is nil immediately after setting!")
+            }
+        } else {
+            print("❌ selectedImageData is nil - no image to save")
+        }
 
         // Convert arrays to JSON strings
         if let ingredientsData = try? JSONEncoder().encode(ingredients.filter { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }) {
             recipe.ingredientsString = String(data: ingredientsData, encoding: .utf8)
         }
 
-        if let instructionsData = try? JSONEncoder().encode(instructions.filter { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }) {
+        // Ensure instructions are always included, even if empty
+        let filteredInstructions = instructions.filter { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+        let finalInstructions = filteredInstructions.isEmpty ? ["Instructions will be added later."] : filteredInstructions
+        
+        if let instructionsData = try? JSONEncoder().encode(finalInstructions) {
             recipe.instructionsString = String(data: instructionsData, encoding: .utf8)
         }
 
@@ -1366,13 +1484,47 @@ struct AddRecipeView: View {
         
         // Save nutrition information
         recipe.setNutritionInfo(nutritionInfo)
+        
+        // Save meal type tags
+        recipe.setMealTypes(selectedMealTypes)
 
         do {
+            print("🔄 About to save to Core Data...")
+            
+            // Final verification before save
+            if let imageData = recipe.imageData {
+                print("🔍 Pre-save verification: Recipe has imageData of \(imageData.count) bytes")
+            } else {
+                print("❌ Pre-save verification: Recipe has NO imageData")
+            }
+            
             try viewContext.save()
-            print("Recipe saved successfully.")
+            print("✅ Core Data save completed successfully!")
+            
+            // Post-save verification
+            if let savedImageData = recipe.imageData {
+                print("✅ POST-SAVE CONFIRMED: Recipe has image data: \(savedImageData.count) bytes")
+                
+                // Test if we can create UIImage from saved data
+                if UIImage(data: savedImageData) != nil {
+                    print("✅ Image data is valid - can create UIImage")
+                } else {
+                    print("❌ Image data is corrupted - cannot create UIImage")
+                }
+            } else {
+                print("❌ POST-SAVE CRITICAL: Recipe has NO image data after save!")
+            }
+            
+            // Force refresh the recipe manager to reload recipes
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                RecipeManager.shared.loadRecipes()
+                print("🔄 Forced recipe manager reload")
+            }
+            
             dismiss()
         } catch {
-            print("Error saving recipe: \(error)")
+            print("❌ Core Data save failed: \(error)")
+            print("❌ Error details: \(error.localizedDescription)")
         }
     }
     

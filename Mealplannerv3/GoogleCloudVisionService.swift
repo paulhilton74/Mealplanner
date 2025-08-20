@@ -258,7 +258,7 @@ class GoogleCloudVisionService {
         
         // Look for recipe title patterns
         // Magazine recipes often have distinctive title patterns
-        for (index, line) in lines.enumerated() {
+        for (_, line) in lines.enumerated() {
             let lowercaseLine = line.lowercased()
             
             // Look for common recipe title indicators

@@ -7,6 +7,7 @@ struct WeeklyPlanView: View {
     @EnvironmentObject private var basketManager: ShoppingBasketManager
     @State private var showingRecipeSheet = false
     @State private var selectedDay: String? = "Monday"
+    @State private var selectedMealType: MealType = .dinner
     @State private var showingShoppingListAlert = false
     @State private var generatedListName = "Weekly Meal Plan"
     @State private var navigateToShoppingList = false
@@ -16,6 +17,7 @@ struct WeeklyPlanView: View {
     @State private var selectedRecipes: [RecipeEntity] = []
     @State private var refreshID = UUID()
     @State private var showingNutritionSummary = false
+    @State private var personCount: Int = 1
     
     // Days of the week starting with Sunday
     let daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
@@ -23,10 +25,11 @@ struct WeeklyPlanView: View {
     var body: some View {
         NavigationStack {
             VStack {
-                // Weekly Nutrition Summary Card
+                // Compact Nutrition Summary Card
                 if !recipeManager.weeklyPlan.isEmpty {
-                    WeeklyNutritionSummaryCard(
+                    CompactNutritionSummaryCard(
                         weeklyNutrition: calculateWeeklyNutrition(),
+                        personCount: $personCount,
                         isExpanded: $showingNutritionSummary
                     )
                     .padding(.horizontal)
@@ -36,86 +39,15 @@ struct WeeklyPlanView: View {
                 
                 List {
                     ForEach(daysOfWeek, id: \.self) { day in
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text(day)
-                                .font(.headline)
-                                .padding(.vertical, 4)
-                            
-                            let dayRecipes = recipeManager.getRecipesForDay(day)
-                            
-                            if dayRecipes.isEmpty {
-                                Button(action: {
-                                    selectedDay = day
-                                    showingRecipeSheet = true
-                                }) {
-                                    HStack {
-                                        Image(systemName: "plus.circle.fill")
-                                            .foregroundColor(.blue)
-                                        Text("Add Recipe")
-                                            .foregroundColor(.blue)
-                                    }
-                                    .padding(.vertical, 8)
-                                }
-                            } else {
-                                ForEach(dayRecipes, id: \.id) { recipe in
-                                    HStack {
-                                        if let imageData = recipe.imageData, let uiImage = UIImage(data: imageData) {
-                                            Image(uiImage: uiImage)
-                                                .resizable()
-                                                .aspectRatio(contentMode: .fill)
-                                                .frame(width: 60, height: 60)
-                                                .cornerRadius(8)
-                                        } else {
-                                            Image(systemName: "photo")
-                                                .resizable()
-                                                .aspectRatio(contentMode: .fit)
-                                                .padding()
-                                                .frame(width: 60, height: 60)
-                                                .background(Color.gray.opacity(0.2))
-                                                .cornerRadius(8)
-                                        }
-                                        
-                                        VStack(alignment: .leading, spacing: 4) {
-                                            Text(recipe.title ?? "Untitled Recipe")
-                                                .font(.subheadline)
-                                                .lineLimit(2)
-                                            
-                                            if let ingredients = recipe.getIngredients(), !ingredients.isEmpty {
-                                                Text("\(ingredients.count) ingredients")
-                                                    .font(.caption)
-                                                    .foregroundColor(.gray)
-                                            }
-                                        }
-                                        
-                                        Spacer()
-                                        
-                                        Button(action: {
-                                            recipeManager.removeRecipeFromDay(recipe, day: day)
-                                        }) {
-                                            Image(systemName: "xmark.circle.fill")
-                                                .foregroundColor(.red)
-                                                .font(.system(size: 22))
-                                        }
-                                    }
-                                    .padding(.vertical, 4)
-                                }
-                                
-                                // Add a single "Add Meal" button at the bottom of the day's recipes
-                                Button(action: {
-                                    selectedDay = day
-                                    showingRecipeSheet = true
-                                }) {
-                                    HStack {
-                                        Image(systemName: "plus.circle.fill")
-                                            .foregroundColor(.blue)
-                                        Text("Add Meal")
-                                            .foregroundColor(.blue)
-                                    }
-                                    .padding(.vertical, 8)
-                                }
+                        DayPlanView(
+                            day: day,
+                            recipeManager: recipeManager,
+                            onSelectDay: { selectedDay, mealType in
+                                self.selectedDay = selectedDay
+                                self.selectedMealType = mealType
+                                self.showingRecipeSheet = true
                             }
-                        }
-                        .padding(.vertical, 4)
+                        )
                     }
                 }
                 .listStyle(InsetGroupedListStyle())
@@ -165,15 +97,13 @@ struct WeeklyPlanView: View {
                 print("WeeklyPlanView appeared - loaded recipes and weekly plan")
             }
             .sheet(isPresented: $showingRecipeSheet) {
-                RecipeSelectionView(
+                MealTypeRecipeSelectionView(
                     selectedDay: selectedDay ?? "",
+                    preselectedMealType: selectedMealType,
                     onSelectRecipe: { recipe in
                         if let day = selectedDay {
-                            recipeManager.addRecipeToDay(recipe, day: day)
+                            recipeManager.addRecipeToDay(recipe, day: day, mealType: selectedMealType.rawValue)
                         }
-                    },
-                    onDone: {
-                        showingRecipeSheet = false
                     }
                 )
                 .environment(\.managedObjectContext, viewContext)
@@ -211,6 +141,17 @@ struct WeeklyPlanView: View {
                                     .foregroundColor(.gray)
                                 TextEditor(text: $manualMealIngredients)
                                     .frame(minHeight: 100)
+                            }
+                        }
+                        
+                        Section(header: Text("Meal Type")) {
+                            HStack {
+                                Text("Type:")
+                                    .foregroundColor(.secondary)
+                                
+                                Spacer()
+                                
+                                MealTypeSelector(selectedMealType: $selectedMealType, style: .segmented)
                             }
                         }
                         
@@ -494,9 +435,9 @@ struct WeeklyPlanView: View {
             try context.save()
             print("Manual meal saved to database: \(newRecipe.displayTitle()), ID: \(newRecipe.id?.uuidString ?? "unknown")")
             
-            // Use RecipeManager to add the recipe to the day
-            recipeManager.addRecipeToDay(newRecipe, day: day)
-            print("Added recipe to day \(day) using RecipeManager")
+            // Use RecipeManager to add the recipe to the day with the selected meal type
+            recipeManager.addRecipeToDay(newRecipe, day: day, mealType: selectedMealType.rawValue)
+            print("Added recipe to day \(day) with meal type \(selectedMealType.rawValue) using RecipeManager")
             
             // Force refresh the view immediately
             refreshID = UUID()
@@ -785,6 +726,245 @@ struct NutritionSummaryItem: View {
                 .foregroundColor(.secondary)
         }
         .frame(maxWidth: .infinity)
+    }
+}
+
+// NEW: Compact Nutrition Summary Card
+struct CompactNutritionSummaryCard: View {
+    let weeklyNutrition: WeeklyNutritionSummary
+    @Binding var personCount: Int
+    @Binding var isExpanded: Bool
+    
+    private var perPersonCalories: Double {
+        weeklyNutrition.dailyAvgCalories / Double(personCount)
+    }
+    
+    private var perPersonMealCalories: Double {
+        weeklyNutrition.mealAvgCalories / Double(personCount)
+    }
+    
+    var body: some View {
+        VStack(spacing: 0) {
+            // Header with person count
+            HStack {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Weekly Nutrition Summary")
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                    
+                    Text("Per person (\(personCount) \(personCount == 1 ? "person" : "people"))")
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
+                }
+                
+                Spacer()
+                
+                // Person count controls
+                HStack(spacing: 8) {
+                    Button(action: {
+                        if personCount > 1 {
+                            personCount -= 1
+                        }
+                    }) {
+                        Image(systemName: "minus.circle.fill")
+                            .font(.system(size: 16))
+                            .foregroundColor(personCount > 1 ? .blue : .gray)
+                    }
+                    .disabled(personCount <= 1)
+                    
+                    Text("\(personCount)")
+                        .font(.caption)
+                        .fontWeight(.medium)
+                        .frame(minWidth: 20)
+                    
+                    Button(action: {
+                        if personCount < 10 {
+                            personCount += 1
+                        }
+                    }) {
+                        Image(systemName: "plus.circle.fill")
+                            .font(.system(size: 16))
+                            .foregroundColor(personCount < 10 ? .blue : .gray)
+                    }
+                    .disabled(personCount >= 10)
+                }
+                
+                Button(action: {
+                    withAnimation(.easeInOut(duration: 0.3)) {
+                        isExpanded.toggle()
+                    }
+                }) {
+                    Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundColor(.blue)
+                }
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 10)
+            
+            // Compact metrics
+            HStack(spacing: 12) {
+                CompactNutritionItem(
+                    value: Int(perPersonCalories),
+                    unit: "kcal",
+                    label: "Daily Avg",
+                    color: .orange
+                )
+                
+                Rectangle()
+                    .fill(Color.gray.opacity(0.3))
+                    .frame(width: 1, height: 30)
+                
+                CompactNutritionItem(
+                    value: Int(perPersonMealCalories),
+                    unit: "kcal",
+                    label: "Per Meal",
+                    color: .green
+                )
+                
+                Rectangle()
+                    .fill(Color.gray.opacity(0.3))
+                    .frame(width: 1, height: 30)
+                
+                CompactNutritionItem(
+                    value: weeklyNutrition.mealCount,
+                    unit: "meals",
+                    label: "Total",
+                    color: .blue
+                )
+            }
+            .padding(.horizontal, 16)
+            .padding(.bottom, 10)
+            
+            if isExpanded {
+                Divider()
+                    .padding(.horizontal, 16)
+                
+                // Detailed view
+                VStack(spacing: 12) {
+                    Text("Detailed Breakdown (per person)")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .padding(.top, 8)
+                    
+                    LazyVGrid(columns: [
+                        GridItem(.flexible()),
+                        GridItem(.flexible()),
+                        GridItem(.flexible()),
+                        GridItem(.flexible())
+                    ], spacing: 8) {
+                        MiniNutritionDial(
+                            value: perPersonCalories,
+                            maxValue: 2500,
+                            label: "Calories",
+                            unit: "kcal",
+                            color: .orange
+                        )
+                        
+                        MiniNutritionDial(
+                            value: weeklyNutrition.dailyAvgFat / Double(personCount),
+                            maxValue: 70,
+                            label: "Fat",
+                            unit: "g",
+                            color: .red
+                        )
+                        
+                        MiniNutritionDial(
+                            value: weeklyNutrition.dailyAvgCarbs / Double(personCount),
+                            maxValue: 300,
+                            label: "Carbs",
+                            unit: "g",
+                            color: .yellow
+                        )
+                        
+                        MiniNutritionDial(
+                            value: weeklyNutrition.dailyAvgProtein / Double(personCount),
+                            maxValue: 50,
+                            label: "Protein",
+                            unit: "g",
+                            color: .green
+                        )
+                    }
+                }
+                .padding(.horizontal, 16)
+                .padding(.bottom, 12)
+            }
+        }
+        .background(Color(.systemGray6))
+        .cornerRadius(12)
+    }
+}
+
+// Helper view for compact nutrition items
+struct CompactNutritionItem: View {
+    let value: Int
+    let unit: String
+    let label: String
+    let color: Color
+    
+    var body: some View {
+        VStack(spacing: 2) {
+            HStack(spacing: 2) {
+                Circle()
+                    .fill(color)
+                    .frame(width: 6, height: 6)
+                
+                Text("\(value)")
+                    .font(.system(size: 16, weight: .bold, design: .rounded))
+                    .foregroundColor(.primary)
+            }
+            
+            Text(unit)
+                .font(.system(size: 10, weight: .medium))
+                .foregroundColor(.secondary)
+            
+            Text(label)
+                .font(.system(size: 9, weight: .medium))
+                .foregroundColor(.secondary)
+        }
+        .frame(maxWidth: .infinity)
+    }
+}
+
+// Mini nutrition dial for expanded view
+struct MiniNutritionDial: View {
+    let value: Double
+    let maxValue: Double
+    let label: String
+    let unit: String
+    let color: Color
+    
+    private var progress: Double {
+        min(value / maxValue, 1.0)
+    }
+    
+    var body: some View {
+        VStack(spacing: 4) {
+            ZStack {
+                Circle()
+                    .stroke(color.opacity(0.2), lineWidth: 3)
+                    .frame(width: 40, height: 40)
+                
+                Circle()
+                    .trim(from: 0, to: progress)
+                    .stroke(color, style: StrokeStyle(lineWidth: 3, lineCap: .round))
+                    .frame(width: 40, height: 40)
+                    .rotationEffect(.degrees(-90))
+                
+                Text("\(Int(value))")
+                    .font(.system(size: 10, weight: .bold))
+                    .foregroundColor(.primary)
+            }
+            
+            Text(label)
+                .font(.system(size: 8, weight: .medium))
+                .foregroundColor(.secondary)
+                .multilineTextAlignment(.center)
+            
+            Text(unit)
+                .font(.system(size: 8))
+                .foregroundColor(.secondary)
+        }
     }
 }
 

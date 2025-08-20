@@ -14,9 +14,17 @@ class PersistenceController {
             forName: NSValueTransformerName("StringArrayTransformer")
         )
         
+        // Enable automatic lightweight migration
+        let storeDescription = container.persistentStoreDescriptions.first
+        storeDescription?.shouldMigrateStoreAutomatically = true
+        storeDescription?.shouldInferMappingModelAutomatically = true
+        
         container.loadPersistentStores { description, error in
             if let error = error {
-                fatalError("Error loading Core Data stores: \(error)")
+                print("Error loading Core Data stores: \(error)")
+                // In production, you might want to handle this more gracefully
+                // For now, we'll still crash but with better logging
+                fatalError("Core Data failed to load: \(error.localizedDescription)")
             }
             
             // Enable automatic merging of changes from parent contexts

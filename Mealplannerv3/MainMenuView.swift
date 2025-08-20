@@ -82,9 +82,27 @@ struct MainMenuView: View {
                             }
                             .padding(.vertical, 8)
                         }
+                        
+                        NavigationLink(destination: FridgeTrackerView()
+                            .environment(\.managedObjectContext, viewContext)) {
+                            HStack {
+                                Image(systemName: "refrigerator")
+                                    .foregroundColor(.cyan)
+                                    .font(.title2)
+                                
+                                VStack(alignment: .leading) {
+                                    Text("Fridge Tracker")
+                                        .font(.headline)
+                                    Text("Track expiration dates of fridge items")
+                                        .font(.subheadline)
+                                        .foregroundColor(.gray)
+                                }
+                            }
+                            .padding(.vertical, 8)
+                        }
                     }
                     .listStyle(InsetGroupedListStyle())
-                    .frame(height: 400)
+                    .frame(height: 480)
                     
                     // Today's Meals Section
                     VStack(alignment: .leading, spacing: 15) {
@@ -157,11 +175,20 @@ struct MainMenuView: View {
                                                     .lineLimit(2)
                                                     .frame(width: 160, alignment: .leading)
                                                 
-                                                if let ingredients = recipe.getIngredients(), !ingredients.isEmpty {
-                                                    Text("\(ingredients.count) ingredients")
-                                                        .font(.caption)
-                                                        .foregroundColor(.gray)
+                                                HStack {
+                                                    if let ingredients = recipe.getIngredients(), !ingredients.isEmpty {
+                                                        Text("\(ingredients.count) ingredients")
+                                                            .font(.caption)
+                                                            .foregroundColor(.gray)
+                                                    }
+                                                    
+                                                    Spacer()
+                                                    
+                                                    if recipe.hasRating {
+                                                        CompactStarRating(rating: recipe.rating)
+                                                    }
                                                 }
+                                                .frame(width: 160)
                                             }
                                             .frame(width: 160)
                                             .padding(.bottom, 5)

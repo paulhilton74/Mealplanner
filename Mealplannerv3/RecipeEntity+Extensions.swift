@@ -54,6 +54,68 @@ extension RecipeEntity {
         return try? JSONDecoder().decode([String].self, from: data)
     }
     
+    // MARK: - Meal Type Tags
+    
+    func getMealTypeTags() -> [MealType] {
+        guard let tags = getTags() else { return [] }
+        return tags.compactMap { MealType(rawValue: $0) }
+    }
+    
+    func setMealTypeTags(_ mealTypes: [MealType]) {
+        // Convert meal types to strings
+        let mealTypeStrings = mealTypes.map { $0.rawValue }
+        
+        // Get existing tags (if any) that are not meal types
+        let existingTags = getTags() ?? []
+        let nonMealTypeTags = existingTags.filter { tag in
+            MealType(rawValue: tag) == nil
+        }
+        
+        // Combine non-meal type tags with new meal type tags
+        let allTags = nonMealTypeTags + mealTypeStrings
+        
+        // Save back to tagsString
+        setTags(allTags)
+    }
+    
+    func addMealTypeTag(_ mealType: MealType) {
+        var currentMealTypes = getMealTypeTags()
+        if !currentMealTypes.contains(mealType) {
+            currentMealTypes.append(mealType)
+            setMealTypeTags(currentMealTypes)
+        }
+    }
+    
+    func removeMealTypeTag(_ mealType: MealType) {
+        var currentMealTypes = getMealTypeTags()
+        currentMealTypes.removeAll { $0 == mealType }
+        setMealTypeTags(currentMealTypes)
+    }
+    
+    func hasMealTypeTag(_ mealType: MealType) -> Bool {
+        return getMealTypeTags().contains(mealType)
+    }
+    
+    // Convenience methods that work with Set<MealType> for SwiftUI binding
+    func getMealTypes() -> Set<MealType> {
+        return Set(getMealTypeTags())
+    }
+    
+    func setMealTypes(_ mealTypes: Set<MealType>) {
+        setMealTypeTags(Array(mealTypes))
+    }
+    
+    private func setTags(_ tags: [String]) {
+        if tags.isEmpty {
+            self.tagsString = nil
+        } else {
+            if let data = try? JSONEncoder().encode(tags),
+               let jsonString = String(data: data, encoding: .utf8) {
+                self.tagsString = jsonString
+            }
+        }
+    }
+    
     // Add a computed property for manual entries
     @objc var isManualEntry: Bool {
         get {
@@ -78,6 +140,44 @@ extension RecipeEntity {
             return String(title.dropFirst(7))
         }
         return title ?? "Untitled Recipe"
+    }
+    
+    // MARK: - Rating Information
+    
+    func updateRating(_ newRating: Float) {
+        self.rating = newRating
+        
+        // Save the context
+        if let context = self.managedObjectContext {
+            do {
+                try context.save()
+            } catch {
+                print("Error saving rating: \(error)")
+            }
+        }
+    }
+    
+    func getRatingDescription() -> String {
+        switch rating {
+        case 0..<1:
+            return "Poor"
+        case 1..<2:
+            return "Below Average"
+        case 2..<3:
+            return "Average"
+        case 3..<4:
+            return "Good"
+        case 4..<5:
+            return "Excellent"
+        case 5:
+            return "Perfect!"
+        default:
+            return "No rating"
+        }
+    }
+    
+    var hasRating: Bool {
+        return rating > 0
     }
     
     // MARK: - Nutrition Information
